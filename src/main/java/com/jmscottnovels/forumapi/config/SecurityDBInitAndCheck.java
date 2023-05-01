@@ -2,7 +2,6 @@ package com.jmscottnovels.forumapi.config;
 
 import com.jmscottnovels.forumapi.model.Privilege;
 import com.jmscottnovels.forumapi.model.Role;
-import com.jmscottnovels.forumapi.model.User;
 import com.jmscottnovels.forumapi.repo.PrivilegeRepository;
 import com.jmscottnovels.forumapi.repo.RoleRepository;
 import com.jmscottnovels.forumapi.repo.UserRepository;
@@ -13,7 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 @Component
 public class SecurityDBInitAndCheck implements ApplicationListener<ContextRefreshedEvent> {
@@ -28,8 +30,9 @@ public class SecurityDBInitAndCheck implements ApplicationListener<ContextRefres
 
     @Autowired
     private PrivilegeRepository privilegeRepository;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+
+//    @Autowired
+//    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -50,7 +53,7 @@ public class SecurityDBInitAndCheck implements ApplicationListener<ContextRefres
         createRoleIfNotFound("ROLE_USER", userPrivileges);
 
         // initial user with bullet proof plain text password
-        createUserIfNotFound("admin@jmscottnovels.com", "JM", "Scott", "12345!", new ArrayList<>(Collections.singletonList(adminRole)));
+        // createUserIfNotFound("admin@somedomain.com", "John", "Smith", "12345luggage", new ArrayList<>(Collections.singletonList(adminRole)));
 
         alreadySetup = true;
     }
@@ -76,21 +79,21 @@ public class SecurityDBInitAndCheck implements ApplicationListener<ContextRefres
         return role;
     }
 
-    @Transactional
-    User createUserIfNotFound(final String email, final String firstName, final String lastName, final String password, final Collection<Role> roles) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            user = new User();
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setPassword(passwordEncoder.encode(password));
-            user.setEmail(email);
-            user.setEnabled(true);
-        }
-        user.setRoles(roles);
-        user = userRepository.save(user);
-        return user;
-    }
-
+    // For initializing some admin user
+//    @Transactional
+//    User createUserIfNotFound(final String email, final String firstName, final String lastName, final String password, final Collection<Role> roles) {
+//        User user = userRepository.findByEmail(email);
+//        if (user == null) {
+//            user = new User();
+//            user.setFirstName(firstName);
+//            user.setLastName(lastName);
+//            user.setPassword(passwordEncoder.encode(password));
+//            user.setEmail(email);
+//            user.setEnabled(true);
+//        }
+//        user.setRoles(roles);
+//        user = userRepository.save(user);
+//        return user;
+//    }
 
 }
