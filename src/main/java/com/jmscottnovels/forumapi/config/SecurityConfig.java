@@ -4,11 +4,14 @@ package com.jmscottnovels.forumapi.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authorization.AuthorityAuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,7 +30,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3002"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3002","http://localhost"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -38,14 +41,14 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()   // by default uses bean called corsConfigurationSource
+        http.cors().and().csrf().disable()  // by default uses bean called corsConfigurationSource
                 .authorizeHttpRequests()
                 .requestMatchers("/", "/error").permitAll()
-                .requestMatchers(HttpMethod.GET, "/forum/**").permitAll()   // access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.read"))
-                .requestMatchers(HttpMethod.OPTIONS, "/forum/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/forum/**").permitAll() //access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.write"))
-                .requestMatchers(HttpMethod.PUT, "/forum/**").permitAll() //access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.write"))
-                .requestMatchers(HttpMethod.DELETE, "/forum/**").access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.admin"))
+                .requestMatchers(HttpMethod.GET, "/**").permitAll()   // access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.read"))
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/**").permitAll() //access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.write"))
+                .requestMatchers(HttpMethod.PUT, "/**").permitAll() //access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.write"))
+                .requestMatchers(HttpMethod.DELETE, "/**").access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.admin"))
                 .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer().jwt();

@@ -2,9 +2,13 @@ package com.jmscottnovels.forumapi.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "topic")
 public class Topic {
 
 
@@ -123,7 +127,6 @@ public class Topic {
 	}
 
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -146,5 +149,19 @@ public class Topic {
 		} else return id.equals(other.id);
 	}
 
-
+	@Override
+	public String toString() {
+		return "Topic{" +
+				"id=" + id +
+				", createdBy=" + createdBy +
+				", lastPostBy=" + lastPostBy +
+				", title='" + title + '\'' +
+				", description='" + description + '\'' +
+				", createdDate=" + createdDate +
+				", lastPostDate=" + lastPostDate +
+				", active=" + active +
+				", replies=" + replies +
+				", views=" + views +
+				'}';
+	}
 }

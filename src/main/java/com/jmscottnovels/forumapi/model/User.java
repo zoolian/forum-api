@@ -1,8 +1,12 @@
 package com.jmscottnovels.forumapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.List;
 
 // CONSIDER: Create a separate object and collection for passwords
 
@@ -21,6 +25,13 @@ public class User {
 	private String password;
 	private boolean enabled;
 	private boolean tokenExpired;
+	@OneToMany(mappedBy = "createdBy")
+	//@JsonIgnore
+	private List<Topic> topicsCreated;
+
+	@OneToMany(mappedBy = "lastPostBy")
+	//@JsonIgnore
+	private List<Topic> topicPosts;
 
 	@ManyToMany
 	@JoinTable(
@@ -93,6 +104,22 @@ public class User {
 
 	public void setRoles(Collection<Role> roles) {
 		this.roles = roles;
+	}
+
+	public List<Topic> getTopicsCreated() {
+		return topicsCreated;
+	}
+
+	public void setTopicsCreated(List<Topic> topicsCreated) {
+		this.topicsCreated = topicsCreated;
+	}
+
+	public List<Topic> getTopicPosts() {
+		return topicPosts;
+	}
+
+	public void setTopicPosts(List<Topic> topicPosts) {
+		this.topicPosts = topicPosts;
 	}
 
 	@Override
