@@ -19,10 +19,12 @@ public class Topic {
 
 	@ManyToOne
 	@JoinColumn(name = "created_by_id")
+	@JsonBackReference(value = "topics-created")
 	private User createdBy;
 
 	@ManyToOne
 	@JoinColumn(name = "last_post_by_id")
+	@JsonBackReference(value = "topic-posts")
 	private User lastPostBy;
 
 	private String title;

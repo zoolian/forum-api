@@ -26,11 +26,11 @@ public class User {
 	private boolean enabled;
 	private boolean tokenExpired;
 	@OneToMany(mappedBy = "createdBy")
-	//@JsonIgnore
+	@JsonManagedReference(value = "topics-created")
 	private List<Topic> topicsCreated;
 
 	@OneToMany(mappedBy = "lastPostBy")
-	//@JsonIgnore
+	@JsonManagedReference(value = "topic-posts")
 	private List<Topic> topicPosts;
 
 	@ManyToMany

@@ -7,10 +7,13 @@ import com.jmscottnovels.forumapi.repo.TopicRepository;
 import com.jmscottnovels.forumapi.repo.UserRepository;
 import com.jmscottnovels.forumapi.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -54,9 +57,9 @@ public class ForumController {
 	}
 	
 	@GetMapping(path = "/topics/{id}")
-	public ResponseEntity<Topic> getTopic (@PathVariable Long id) throws ResourceNotFoundException {
+	public ResponseEntity<TopicDTO> getTopic (@PathVariable Long id) throws ResourceNotFoundException {
 		
-		Topic topic = topicRepository.findById(id).orElseThrow(
+		TopicDTO topic = topicRepository.findTopicById(id).orElseThrow(
 				() -> new ResourceNotFoundException("No topic with id: " + id));
 		
 		return ResponseEntity.ok().body(topic);
@@ -84,20 +87,21 @@ public class ForumController {
 //		return ResponseEntity.created(uri).build();
 //	}
 //
-//	@PutMapping(path = "/topics/{id}")
-//	public ResponseEntity<Topic> updateForumTopic (
-//			@PathVariable Long id,
-//			@Validated @RequestBody Topic topic) throws ResourceNotFoundException {
-//
-//		topicRepository.findById(id).orElseThrow(
-//				() -> new ResourceNotFoundException("No topic with id: " + id));
-//
-//		topic.setLastPostDate(new Date());	// set immediately before db write
-//		final Topic newTopic = topicRepository.save(topic);
-//
-//		return new ResponseEntity<Topic>(newTopic, HttpStatus.OK);
-//
-//	}
+	@PutMapping(path = "/topics/{id}")
+	public ResponseEntity<Topic> updateForumTopic (
+			@PathVariable Long id,
+			@Validated @RequestBody Topic topic) throws ResourceNotFoundException {
+
+		topicRepository.findById(id).orElseThrow(
+				() -> new ResourceNotFoundException("No topic with id: " + id));
+
+		topic.setId(id);
+		topic.setLastPostDate(new Date());	// set immediately before db write
+		final Topic newTopic = topicRepository.save(topic);
+
+		return new ResponseEntity<>(newTopic, HttpStatus.OK);
+
+	}
 //
 //	@DeleteMapping(path = "/topics/{id}")
 //	public ResponseEntity<Topic> deleteForumTopic (@PathVariable Long id) throws ResourceNotFoundException {

@@ -7,18 +7,28 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Long> {
 
 	List<Topic> findByCreatedById(Long id);
 	@Query("""
-			 select new com.jmscottnovels.forumapi.model.TopicDTO(t.id as id, t.createdBy.id,
-			 t.createdBy.firstName as createdByFirstName, t.createdBy.lastName as createdByLastName, t.title as title,
-			 t.description as description, t.createdDate, t.lastPostDate, t.active)
+			 select new com.jmscottnovels.forumapi.model.TopicDTO(
+			 t.id, t.createdBy.id, t.createdBy.firstName, t.createdBy.lastName, t.title,
+			 t.description, t.createdDate, t.lastPostDate, t.active, t.views)
 			 from Topic t
 			 """)
 	List<TopicDTO> findAllTopics();
+
+	@Query("""
+			 select new com.jmscottnovels.forumapi.model.TopicDTO(
+			 t.id, t.createdBy.id, t.createdBy.firstName, t.createdBy.lastName, t.title,
+			 t.description, t.createdDate, t.lastPostDate, t.active, t.views)
+			 from Topic t
+			 where t.id = ?1
+			 """)
+	Optional<TopicDTO> findTopicById(Long id);
 
 
 //

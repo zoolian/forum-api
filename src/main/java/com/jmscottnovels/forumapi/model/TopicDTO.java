@@ -35,7 +35,7 @@ public class TopicDTO {
 
 	private int views = 0;
 
-	public TopicDTO(Long id, Long createdById, String createdByFirstName, String createdByLastName, String title, String description, Date createdDate, Date lastPostDate, boolean active) {
+	public TopicDTO(Long id, Long createdById, String createdByFirstName, String createdByLastName, String title, String description, Date createdDate, Date lastPostDate, boolean active, int views) {
 		this.id = id;
 		this.createdById = createdById;
 		this.createdByFirstName = createdByFirstName;
@@ -45,6 +45,7 @@ public class TopicDTO {
 		this.createdDate = createdDate;
 		this.lastPostDate = lastPostDate;
 		this.active = active;
+		this.views = views;
 //		this.createdBy = new UserDTO(createdById, createdByFirstName, createdByLastName);
 //		this.createdBy.setId(createdById);
 //		this.createdBy.setFirstName(createdByFirstName);
