@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    @Query("{ 'name' : { $regex: ?0 } }")
 //    List<User> findUsersByRegexpName(String regexp);
 
-	List<Role> getRolesById(String userId);
+	List<Role> getRolesById(Long userId);
 
     User findByEmail(String email);
 

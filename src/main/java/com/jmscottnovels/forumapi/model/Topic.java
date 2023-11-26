@@ -11,9 +11,8 @@ import jakarta.persistence.*;
 @Table(name = "topic")
 public class Topic {
 
-
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
 	private Long id;
 
@@ -114,7 +113,7 @@ public class Topic {
 	public void setViews(int views) {		this.views = views;	}
 
 	protected Topic() {}
-		
+
 	public Topic(Long id, User createdBy, User lastPostBy, String title, String description, String content, Date createDate, Date lastPostDate,
 				 boolean active) {
 		super();
@@ -128,6 +127,11 @@ public class Topic {
 		this.active = active;
 	}
 
+	public Topic(User createdBy, String title, String description) {
+		this.createdBy = createdBy;
+		this.title = title;
+		this.description = description;
+	}
 
 	@Override
 	public int hashCode() {
@@ -155,8 +159,8 @@ public class Topic {
 	public String toString() {
 		return "Topic{" +
 				"id=" + id +
-				", createdBy=" + createdBy +
-				", lastPostBy=" + lastPostBy +
+				", createdBy=" + createdBy.toString() +
+				", lastPostBy=" + lastPostBy.toString() +
 				", title='" + title + '\'' +
 				", description='" + description + '\'' +
 				", createdDate=" + createdDate +

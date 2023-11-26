@@ -18,19 +18,19 @@ public class TopicService {
     private TopicRepository topicRepository;
 
 
-    public List<Topic> buildTopicList(Integer recentNum) {
-
-        List<Topic> topics = new ArrayList<>();
-
-        if(recentNum != null && recentNum != 0) {
-            Page<Topic> page = topicRepository.findAll(PageRequest.of(0, recentNum, Sort.by(Sort.Order.desc("last_post_date"))));
-        } else {
-            topics = topicRepository.findAll();
-        }
-
-        for(Topic topic : topics) {
-            System.out.println(topic.toString());
-        }
-        return topics;
-    }
+//    public List<Topic> buildTopicList(Integer recentNum) {
+//
+//        List<Topic> topics = new ArrayList<>();
+//
+//        if(recentNum != null && recentNum != 0) {
+//            Page<Topic> page = topicRepository.findAllTopics(PageRequest.of(0, recentNum, Sort.by(Sort.Order.desc("last_post_date")))).getContent();
+//        } else {
+//            topics = topicRepository.findAllTopics();
+//        }
+//
+//        for(Topic topic : topics) {
+//            System.out.println(topic.toString());
+//        }
+//        return topics;
+//    }
 }
