@@ -16,43 +16,34 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
 	List<Topic> findByCreatedById(Long id);
 	@Query("""
 			 select new com.jmscottnovels.forumapi.model.TopicDTO(
-			 t.id, t.createdBy.id, t.createdBy.firstName, t.createdBy.lastName, t.title,
-			 t.description, t.createdDate, t.lastPostDate, t.active, t.views)
-			 from Topic t
+			 t.id, t.createdBy.id, t.createdBy.firstName, t.createdBy.lastName, 
+			 t.lastPostBy.id, t.lastPostBy.firstName, t.lastPostBy.lastName, 
+			 t.title, t.description, t.createdDate, t.lastPostDate, t.active, t.views)
+			 from Topic t 
+			 order by t.lastPostDate desc
 			 """)
 	List<TopicDTO> findAllTopics();
 
 	@Query("""
 			select new com.jmscottnovels.forumapi.model.TopicDTO(
-			t.id, t.createdBy.id, t.createdBy.firstName, t.createdBy.lastName, t.title,
-			t.description, t.createdDate, t.lastPostDate, t.active, t.views)
+			t.id, t.createdBy.id, t.createdBy.firstName, t.createdBy.lastName, 
+			t.lastPostBy.id, t.lastPostBy.firstName, t.lastPostBy.lastName, 
+			t.title, t.description, t.createdDate, t.lastPostDate, t.active, t.views)
 			from Topic t
 			where t.lastPostDate > cast(:startDate AS TIMESTAMP)
-				and t.lastPostDate < cast(:endDate AS TIMESTAMP)
+				and t.lastPostDate < cast(:endDate AS TIMESTAMP) 
+			order by t.lastPostDate desc
 			 """)
 	List<TopicDTO> findAllTopics(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-	// no need to top, go back to jpql new!!!!!
-//	@Query(nativeQuery = true, value = """
-//			select t.id, t.title, t.description, t.created_date as createdDate, t.last_post_date lastPostDate, t.active, t.views,
-//				u.id as createdById,
-//				u.first_name as createdByFirstName,
-//				u.last_name as createdByLastName
-//			from topic t
-//			join user_account u
-//				on t.created_by_id = u.id
-//			where t.last_post_date > cast(:startDate AS TIMESTAMP)
-//				and t.last_post_date < cast(:endDate AS TIMESTAMP)
-//			"""
-//			)
-//	List<TopicDTO> findAllTopics(@Param("startDate") String startDate, @Param("endDate") String endDate);
-
 	@Query("""
 			 select new com.jmscottnovels.forumapi.model.TopicDTO(
-			 t.id, t.createdBy.id, t.createdBy.firstName, t.createdBy.lastName, t.title,
-			 t.description, t.createdDate, t.lastPostDate, t.active, t.views)
+			 t.id, t.createdBy.id, t.createdBy.firstName, t.createdBy.lastName, 
+			 t.lastPostBy.id, t.lastPostBy.firstName, t.lastPostBy.lastName, 
+			 t.title, t.description, t.createdDate, t.lastPostDate, t.active, t.views)
 			 from Topic t
-			 where t.id = ?1
+			 where t.id = ?1 
+			 order by t.lastPostDate desc
 			 """)
 	Optional<TopicDTO> findTopicById(Long id);
 

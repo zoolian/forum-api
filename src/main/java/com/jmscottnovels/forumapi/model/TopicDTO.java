@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
 
@@ -22,12 +25,18 @@ public class TopicDTO {
 
 	private String createdByLastName;
 
+	private Long lastPostById;
+
+	private String lastPostByFirstName;
+
+	private String lastPostByLastName;
+
 	private String title;
 
 	private String description;
 
-	private Date createdDate;
-	private Date lastPostDate;
+	private String createdDate;
+	private String lastPostDate;
 	private boolean active = true;
 
 	@Transient
@@ -35,21 +44,25 @@ public class TopicDTO {
 
 	private int views = 0;
 
-	public TopicDTO(Long id, Long createdById, String createdByFirstName, String createdByLastName, String title, String description, Date createdDate, Date lastPostDate, boolean active, int views) {
+
+	public TopicDTO(Long id, Long createdById, String createdByFirstName, String createdByLastName,
+					Long lastPostById, String lastPostByFirstName, String lastPostByLastName,
+					String title, String description, Date createdDate, Date lastPostDate, boolean active, int views) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("M-dd-yy h:mm a");
+
 		this.id = id;
 		this.createdById = createdById;
 		this.createdByFirstName = createdByFirstName;
 		this.createdByLastName = createdByLastName;
+		this.lastPostById = lastPostById;
+		this.lastPostByFirstName = lastPostByFirstName;
+		this.lastPostByLastName = lastPostByLastName;
 		this.title = title;
 		this.description = description;
-		this.createdDate = createdDate;
-		this.lastPostDate = lastPostDate;
+		this.createdDate = createdDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(dateTimeFormatter);
+		this.lastPostDate = lastPostDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(dateTimeFormatter);
 		this.active = active;
 		this.views = views;
-//		this.createdBy = new UserDTO(createdById, createdByFirstName, createdByLastName);
-//		this.createdBy.setId(createdById);
-//		this.createdBy.setFirstName(createdByFirstName);
-//		this.createdBy.setLastName(createdByLastName);
 	}
 
 	@Override
@@ -57,11 +70,11 @@ public class TopicDTO {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		TopicDTO topicDTO = (TopicDTO) o;
-		return active == topicDTO.active && replies == topicDTO.replies && views == topicDTO.views && Objects.equals(id, topicDTO.id) && Objects.equals(createdById, topicDTO.createdById) && Objects.equals(createdByFirstName, topicDTO.createdByFirstName) && Objects.equals(createdByLastName, topicDTO.createdByLastName) && Objects.equals(title, topicDTO.title) && Objects.equals(description, topicDTO.description) && Objects.equals(createdDate, topicDTO.createdDate) && Objects.equals(lastPostDate, topicDTO.lastPostDate);
+		return active == topicDTO.active && replies == topicDTO.replies && views == topicDTO.views && Objects.equals(id, topicDTO.id) && Objects.equals(createdById, topicDTO.createdById) && Objects.equals(createdByFirstName, topicDTO.createdByFirstName) && Objects.equals(createdByLastName, topicDTO.createdByLastName) && Objects.equals(lastPostById, topicDTO.lastPostById) && Objects.equals(lastPostByFirstName, topicDTO.lastPostByFirstName) && Objects.equals(lastPostByLastName, topicDTO.lastPostByLastName) && Objects.equals(title, topicDTO.title) && Objects.equals(description, topicDTO.description) && Objects.equals(createdDate, topicDTO.createdDate) && Objects.equals(lastPostDate, topicDTO.lastPostDate);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, createdById, createdByFirstName, createdByLastName, title, description, createdDate, lastPostDate, active, replies, views);
+		return Objects.hash(id, createdById, createdByFirstName, createdByLastName, lastPostById, lastPostByFirstName, lastPostByLastName, title, description, createdDate, lastPostDate, active, replies, views);
 	}
 }

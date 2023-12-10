@@ -40,6 +40,7 @@ public class ForumController {
 
 		return ResponseEntity.ok().body("OK");
 	}
+
 	@GetMapping(path = "/topics/createdBy/{id}")
 	public List<Topic> getTopicsByCreatedBy (@PathVariable Long id) throws ResourceNotFoundException {
 		userRepository.findById(id).orElseThrow(
@@ -74,12 +75,11 @@ public class ForumController {
 	
 	@PostMapping(path = "/topics")
 	public ResponseEntity<String> createForumTopic (@Validated @RequestBody Topic topic) throws ResourceNotFoundException {
-		// TODO: verify data
 
 		User createdBy = userRepository.findById(topic.getCreatedBy().getId()).orElseThrow(
 				() -> new ResourceNotFoundException("No user with id: " + topic.getCreatedBy().getId()));
 		User lastPostBy = userRepository.findById(topic.getLastPostBy().getId()).orElseThrow(
-				() -> new ResourceNotFoundException("No user with id: " + topic.getCreatedBy().getId()));
+				() -> new ResourceNotFoundException("No user with id: " + topic.getLastPostBy().getId()));
 
 		topic.setCreatedBy(createdBy);
 		topic.setLastPostBy(lastPostBy);
@@ -94,7 +94,7 @@ public class ForumController {
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 			.buildAndExpand(newTopic.getId()).toUri();
 
-		return ResponseEntity.created(uri).build();
+		return ResponseEntity.created(uri).header("NewID",newTopic.getId().toString()).build();
 	}
 
 	@PutMapping(path = "/topics/{id}")
@@ -102,26 +102,30 @@ public class ForumController {
 			@PathVariable Long id,
 			@Validated @RequestBody Topic topic) throws ResourceNotFoundException {
 
-		topicRepository.findById(id).orElseThrow(
+		Topic oldTopic = topicRepository.findById(id).orElseThrow(
 				() -> new ResourceNotFoundException("No topic with id: " + id));
 
 		topic.setId(id);
-		topic.setLastPostDate(new Date());	// set immediately before db write
+		topic.setLastPostDate(oldTopic.getLastPostDate()); // don't change these
+		topic.setCreatedDate(oldTopic.getCreatedDate());
+		topic.setCreatedBy(oldTopic.getCreatedBy());
+		topic.setLastPostBy(oldTopic.getLastPostBy());
+
 		final Topic newTopic = topicRepository.save(topic);
 
 		return new ResponseEntity<>(newTopic, HttpStatus.OK);
 
 	}
-//
-//	@DeleteMapping(path = "/topics/{id}")
-//	public ResponseEntity<Topic> deleteForumTopic (@PathVariable Long id) throws ResourceNotFoundException {
-//
-//		Topic deletedTopic = topicRepository.findById(id).orElseThrow(
-//				() -> new ResourceNotFoundException("No topic with id: " + id));
-//
-//		topicRepository.deleteById(id);
-//		return new ResponseEntity<Topic>(deletedTopic, HttpStatus.OK);
-//
-//	}
+
+	@DeleteMapping(path = "/topics/{id}")
+	public ResponseEntity<Topic> deleteForumTopic (@PathVariable Long id) throws ResourceNotFoundException {
+
+		Topic deletedTopic = topicRepository.findById(id).orElseThrow(
+				() -> new ResourceNotFoundException("No topic with id: " + id));
+
+		topicRepository.deleteById(id);
+		return new ResponseEntity<>(deletedTopic, HttpStatus.OK);
+
+	}
 
 }

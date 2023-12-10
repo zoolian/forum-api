@@ -1,16 +1,17 @@
 package com.jmscottnovels.forumapi.model;
 
-import java.util.Date;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "topic")
-public class Topic {
+@Table(name = "post")
+@NoArgsConstructor
+public class Post {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,23 +20,13 @@ public class Topic {
 
 	@ManyToOne
 	@JoinColumn(name = "created_by_id")
-	@JsonBackReference(value = "topics-created")
+	@JsonBackReference(value = "posts-created")
 	private User createdBy;
-
-//	@ManyToOne
-//	@JoinColumn(name = "last_post_by_id")
-//	@JsonBackReference(value = "topic-posts")
-	@OneToOne
-	@JoinColumn(name = "last_post_by_id")
-	private User lastPostBy;
-
-	@OneToMany
-	private List<Post> posts;
 
 	private String title;
 
-	private String description;
-	
+	private String content;
+
 	private Date createdDate;
 	private Date lastPostDate;
 	private boolean active = true;
@@ -46,25 +37,22 @@ public class Topic {
 	private int views = 0;
 
 
-	protected Topic() {}
-
-	public Topic(Long id, User createdBy, User lastPostBy, String title, String description, Date createDate, Date lastPostDate,
-				 boolean active) {
+	public Post(Long id, User createdBy, String title, String content, Date createDate, Date lastPostDate,
+                boolean active) {
 		super();
 		this.id = id;
 		this.createdBy = createdBy;
-		this.lastPostBy = lastPostBy;
 		this.title = title;
-		this.description = description;
+		this.content = content;
 		this.createdDate = createDate;
 		this.lastPostDate = lastPostDate;
 		this.active = active;
 	}
 
-	public Topic(User createdBy, String title, String description) {
+	public Post(User createdBy, String title, String content) {
 		this.createdBy = createdBy;
 		this.title = title;
-		this.description = description;
+		this.content = content;
 	}
 
 	@Override
@@ -83,7 +71,7 @@ public class Topic {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Topic other = (Topic) obj;
+		Post other = (Post) obj;
 		if (id == null) {
 			return other.id == null;
 		} else return id.equals(other.id);
@@ -94,7 +82,7 @@ public class Topic {
 		return "Topic{" +
 				"id=" + id +
 				", title='" + title + '\'' +
-				", description='" + description + '\'' +
+				", content='" + content + '\'' +
 				", createdDate=" + createdDate +
 				", lastPostDate=" + lastPostDate +
 				", active=" + active +
