@@ -29,6 +29,11 @@ public class Post {
 
 	private Date createdDate;
 	private Date lastPostDate;
+
+	@OneToOne
+	@JoinColumn(name = "parent_post_id")
+	private Post parentPost;
+
 	private boolean active = true;
 
 	@Transient

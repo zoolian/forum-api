@@ -27,6 +27,9 @@ public class PostDTO {
 	private String content;
 
 	private String createdDate;
+
+	private Long parentPostId;
+
 	private boolean active = true;
 
 	@Transient

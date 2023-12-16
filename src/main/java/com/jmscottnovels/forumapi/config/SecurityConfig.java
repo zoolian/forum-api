@@ -7,11 +7,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -42,8 +44,10 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()  // by default uses bean called corsConfigurationSource
-                .authorizeHttpRequests()
+        http.csrf((csrf) -> csrf
+                        .csrfTokenRepository(new HttpSessionCsrfTokenRepository())
+                )
+            .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/", "/error").permitAll()
                 .requestMatchers(HttpMethod.GET, "/**").permitAll()   // access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.read"))
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -51,8 +55,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/**").permitAll() //access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.write"))
                 .requestMatchers(HttpMethod.DELETE, "/**").access(AuthorityAuthorizationManager.hasAuthority("SCOPE_forum.admin"))
                 .anyRequest().authenticated()
-                .and()
-                .oauth2ResourceServer().jwt();
+            ).rememberMe(Customizer.withDefaults());
 
         // Send a 401 message to the browser (w/o this, you'll see a blank page)
         // Okta.configureResourceServer401ResponseBody(http);
